@@ -106,6 +106,22 @@ def edit_profile(username):
     return jsonify({'message': 'Profile has been updated'}), 200
 
 
+@app.route('/delete-user/<username>', methods=['DELETE'])
+def delete_user(username):
+    user_account = UserAccount.query.filter_by(username=username).first()
+    if not user_account:
+        return jsonify({'message': 'User not found'}), 404
+
+    db.session.delete(user_account)
+
+    try:
+        db.session.commit()
+        return jsonify({'message': f'User {username} has been deleted'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Delete user failed', 'error': str(e)}), 500
+
+
 def calculate_age(birthdate):
     today = datetime.date.today()
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
