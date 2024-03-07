@@ -185,6 +185,10 @@ def get_foods_nutrition(food_names):
 
 @app.route('/today-nutrition-intake/<username>', methods=['POST'])
 def check_user_today_nutrition_intake(username):
+    user_account = UserAccount.query.filter_by(username=username).first()
+    if not user_account:
+        return jsonify({'message': 'User not found'}), 404
+    
     calorie_intake = 0
     protein_intake = 0
     fat_intake = 0
